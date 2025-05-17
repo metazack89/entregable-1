@@ -30,7 +30,6 @@ export class UpdaterUserService {
             }
         }
 
-        // Actualizar el usuario
         const updateData: any = { ...updateUserDto };
         if (updateUserDto.role !== undefined) {
 

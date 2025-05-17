@@ -14,8 +14,8 @@ export class Server {
     }
 
     private configureMiddlewares() {
-        this.app.use(express.json()); // Para parsear JSON en el body de las peticiones
-        this.app.use(express.urlencoded({ extended: true })); // Para parsear URL-encoded bodies
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({ extended: true }));
     }
 
     private configureRoutes() {

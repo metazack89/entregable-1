@@ -1,12 +1,12 @@
 import 'dotenv/config';
-import env from 'env-var';
+import { get } from 'env-var';
 
 export const envs = {
-    PORT: env.get('PORT').required().asPortNumber(),
-    DB_HOST: env.get('DB_HOST').required().asString(),
-    DB_PORT: env.get('DB_PORT').required().asPortNumber(),
-    DB_USERNAME: env.get('DB_USERNAME').required().asString(),
-    DB_PASSWORD: env.get('DB_PASSWORD').required().asString(),
-    DB_NAME: env.get('DB_NAME').required().asString(),
-    DB_SSL: env.get('DB_SSL').default('false').asBool(),
+    PORT: get('PORT').required().asPortNumber(),
+    PGHOST: get('PGHOST').required().asString(),
+    PGPORT: get('PGPORT').required().asPortNumber(),
+    PGUSER: get('PGUSER').required().asString(),
+    PGPASSWORD: get('PGPASSWORD').required().asString(),
+    PGDATABASE: get('PGDATABASE').required().asString(),
+    PGSSL: get('PGSSL').default('false').asBool(),
 };

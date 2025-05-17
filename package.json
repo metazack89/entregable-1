@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && tsc",
     "start": "npm run build && node dist/app.js",
-    "dev": "tsnd --respawn src/app.ts"
+    "dev": "tsnd --respawn src/app.ts",
+    "start:dev": "ts-node-dev src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -44,6 +45,7 @@
     "eastasianwidth": "^0.2.0",
     "emoji-regex": "^9.2.2",
     "env-var": "^7.5.0",
+    "express": "^5.1.0",
     "fill-range": "^7.1.1",
     "foreground-child": "^3.3.1",
     "fs.realpath": "^1.0.0",
@@ -74,6 +76,7 @@
     "path-key": "^3.1.1",
     "path-parse": "^1.0.7",
     "path-scurry": "^2.0.0",
+    "pg": "^8.16.0",
     "picomatch": "^2.3.1",
     "readdirp": "^3.6.0",
     "resolve": "^1.22.10",
@@ -102,5 +105,13 @@
     "wrappy": "^1.0.2",
     "xtend": "^4.0.2",
     "yn": "^3.1.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metazack89/entregable-1.git"
+  },
+  "bugs": {
+    "url": "https://github.com/metazack89/entregable-1/issues"
+  },
+  "homepage": "https://github.com/metazack89/entregable-1#readme"
 }

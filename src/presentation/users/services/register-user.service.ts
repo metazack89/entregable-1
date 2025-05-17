@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { User } from '../../../data/postgres/models/user.model';
+import { User, UserRole } from '../../../data/postgres/models/user.model'; // Importa UserRole
 import { CreateUserDto } from '../../../domain/dtos/users/create-user.dto';
 import { appDataSource } from '../../../data/postgres/postgres-database';
 
@@ -11,7 +11,7 @@ export class RegisterUserService {
     }
 
     async execute(createUserDto: CreateUserDto): Promise<User> {
-        // Verificar si el email ya existe
+
         const userExists = await this.userRepository.findOne({
             where: { email: createUserDto.email },
         });
@@ -20,10 +20,16 @@ export class RegisterUserService {
             throw new Error(`User with email ${createUserDto.email} already exists`);
         }
 
-        // Crear nuevo usuario
-        const newUser = this.userRepository.create(createUserDto);
+        // Convertir el role a UserRole, o usar el valor por defecto
+        const userData = {
+            ...createUserDto,
+            role: createUserDto.role && Object.values(UserRole).includes(createUserDto.role as UserRole)
+                ? createUserDto.role as UserRole
+                : UserRole.USER,
+        };
 
-        // Guardar en la base de datos
+        const newUser = this.userRepository.create(userData);
+
         return await this.userRepository.save(newUser);
     }
 }

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { UsersRoutes } from './presentation/users/routes';
-import { PetPostsRoutes } from './presentation/pet-post/routes';
+import { UsersRoutes } from '../presentation/users/routes';
+import { PetPostsRoutes } from '../presentation/pet-post/routes';
 
 export class AppRoutes {
     static get routes(): Router {
