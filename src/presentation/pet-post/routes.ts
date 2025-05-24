@@ -1,34 +1,42 @@
 import { Router } from 'express';
-import { PetPostsController } from './controller';
+import { PetPostController } from './controller';
 import { CreatorPetPostService } from './services/creator-pet-post.service';
 import { FinderPetPostService } from './services/finder-pet-post.service';
 import { UpdaterPetPostService } from './services/updater-pet-post.service';
 import { EliminatorPetPostService } from './services/eliminator-pet-post.service';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { creatorMiddleware } from '../middleware/creator-middleware-impl';
 
-export class PetPostsRoutes {
+export class PetPostRoutes {
     static get routes(): Router {
         const router = Router();
 
-        // Inyección de dependencias
+        // Instantiate services
         const creatorPetPostService = new CreatorPetPostService();
         const finderPetPostService = new FinderPetPostService();
         const updaterPetPostService = new UpdaterPetPostService();
         const eliminatorPetPostService = new EliminatorPetPostService();
 
-        const controller = new PetPostsController(
+        // Instantiate controller with dependency injection
+        const petPostController = new PetPostController(
             creatorPetPostService,
             finderPetPostService,
             updaterPetPostService,
             eliminatorPetPostService
         );
 
-        router.get('/', controller.getPosts);
-        router.get('/:id', controller.getPostById);
-        router.post('/', controller.createPost);
-        router.put('/:id', controller.updatePost);
-        router.delete('/:id', controller.deletePost);
-        router.put('/:id/approve', controller.approvePost);
-        router.put('/:id/reject', controller.rejectPost);
+        // Public routes (require authentication)
+        router.post('/', authMiddleware.validateToken, petPostController.create);
+        router.get('/', authMiddleware.validateToken, petPostController.findAll);
+        router.get('/:id', authMiddleware.validateToken, petPostController.findById);
+
+        // Protected routes (require ownership or admin)
+        router.put('/:id', authMiddleware.validateToken, creatorMiddleware.requirePostCreator, petPostController.update);
+        router.delete('/:id', authMiddleware.validateToken, creatorMiddleware.requirePostCreator, petPostController.delete);
+
+        // Admin only routes
+        router.patch('/:id/approve', authMiddleware.validateToken, authMiddleware.requireAdmin, petPostController.approve);
+        router.patch('/:id/reject', authMiddleware.validateToken, authMiddleware.requireAdmin, petPostController.reject);
 
         return router;
     }

@@ -1,39 +1,65 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.model';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { User, UserRole } from './user.model';
 
 export enum PostStatus {
     PENDING = 'pending',
     APPROVED = 'approved',
-    REJECTED = 'rejected',
+    REJECTED = 'rejected'
 }
 
-@Entity({ name: 'pet_posts' })
+@Entity('pet_posts')
 export class PetPost {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 200 })
     title: string;
 
     @Column({ type: 'text' })
     description: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    imageUrl: string;
+    @Column({ type: 'varchar', length: 50 })
+    pet_type: string;
+
+    @Column({ type: 'varchar', length: 100 })
+    pet_name: string;
+
+    @Column({ type: 'varchar', length: 200 })
+    location: string;
+
+    @Column({ type: 'varchar', length: 15, nullable: true })
+    contact_phone: string;
+
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    contact_email: string;
+
+    @Column({ type: 'varchar', length: 500, nullable: true })
+    image_url: string;
+
 
     @Column({
         type: 'enum',
-        enum: PostStatus,
-        default: PostStatus.PENDING,
+        enum: UserRole,
+        default: UserRole.USER
     })
-    status: PostStatus;
+    status: UserRole;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+    @Column({ type: 'boolean', default: true })
+    is_active: boolean;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+    @CreateDateColumn()
+    created_at: Date;
 
-    @ManyToOne(() => User, (user) => user.petPosts)
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @Column({ name: 'user_id' })
+    user_id: number;
+
+    @ManyToOne(() => User, user => user.pet_posts)
+    @JoinColumn({ name: 'user_id' })
     user: User;
+    message: any;
+    petPost: any;
+    success: any;
 }

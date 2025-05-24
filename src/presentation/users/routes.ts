@@ -1,38 +1,50 @@
 import { Router } from 'express';
 import { UsersController } from './controller';
 import { RegisterUserService } from './services/register-user.service';
-import { FinderUsersService } from './services/finder-users.service';
+import { LoginUserService } from './services/login-user.service';
 import { FinderUserService } from './services/finder-user.service';
 import { UpdaterUserService } from './services/updater-user.service';
 import { EliminatorUserService } from './services/eliminator-user.service';
-import { LoginUserService } from './services/login-user.service';
+import { authMiddleware } from '../middleware/auth.middleware';
 
 export class UsersRoutes {
     static get routes(): Router {
         const router = Router();
 
+        // Initialize services
         const registerUserService = new RegisterUserService();
-        const finderUsersService = new FinderUsersService();
+        const loginUserService = new LoginUserService();
         const finderUserService = new FinderUserService();
         const updaterUserService = new UpdaterUserService();
         const eliminatorUserService = new EliminatorUserService();
-        const loginUserService = new LoginUserService();
 
-        const controller = new UsersController(
+        // Initialize controller with dependency injection
+        const usersController = new UsersController(
             registerUserService,
-            finderUsersService,
+            loginUserService,
             finderUserService,
             updaterUserService,
-            eliminatorUserService,
-            loginUserService
+            eliminatorUserService
         );
 
-        router.get('/', controller.getUsers);
-        router.get('/:id', controller.getUserById);
-        router.post('/', controller.createUser);
-        router.put('/:id', controller.updateUser);
-        router.delete('/:id', controller.deleteUser);
-        router.post('/login', controller.loginUser);
+        // Public routes (no authentication required)
+        router.post('/register', usersController.register);
+        router.post('/login', usersController.login);
+
+        // Protected routes (authentication required)
+        router.use(authMiddleware.validateToken);
+
+        // Get all users - Admin only
+        router.get('/', authMiddleware.requireAdmin, usersController.getUsers);
+
+        // Get user by ID - Owner or Admin
+        router.get('/:id', authMiddleware.requireOwnerOrAdmin, usersController.getUserById);
+
+        // Update user - Owner or Admin
+        router.put('/:id', authMiddleware.requireOwnerOrAdmin, usersController.updateUser);
+
+        // Delete user - Admin only
+        router.delete('/:id', authMiddleware.requireAdmin, usersController.deleteUser);
 
         return router;
     }

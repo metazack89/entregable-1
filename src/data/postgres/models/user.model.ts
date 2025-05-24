@@ -1,20 +1,20 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { PetPost } from './pet-post.model';
 
 export enum UserRole {
     ADMIN = 'admin',
-    USER = 'user',
+    USER = 'user'
 }
 
-@Entity({ name: 'users' })
+@Entity('users')
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 100 })
     name: string;
 
-    @Column({ type: 'varchar', length: 255, unique: true })
+    @Column({ type: 'varchar', length: 100, unique: true })
     email: string;
 
     @Column({ type: 'varchar', length: 255 })
@@ -23,10 +23,20 @@ export class User {
     @Column({
         type: 'enum',
         enum: UserRole,
-        default: UserRole.USER,
+        default: UserRole.USER
     })
     role: UserRole;
 
-    @OneToMany(() => PetPost, (petPost) => petPost.user)
-    petPosts: PetPost[];
+    @Column({ type: 'boolean', default: true })
+    is_active: boolean;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @OneToMany(() => PetPost, petPost => petPost.user)
+    pet_posts: PetPost[];
+    contact_email: string;
 }

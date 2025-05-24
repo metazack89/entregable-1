@@ -1,35 +1,47 @@
-import { Repository } from 'typeorm';
-import { User, UserRole } from '../../../data/postgres/models/user.model'; // Importa UserRole
+import { AppDataSource } from '../../../data/postgres/postgres-database';
+import { User } from '../../../data/postgres/models/user.model';
 import { CreateUserDto } from '../../../domain/dtos/users/create-user.dto';
-import { appDataSource } from '../../../data/postgres/postgres-database';
+import { AuthService } from './auth.service';
 
 export class RegisterUserService {
-    private readonly userRepository: Repository<User>;
+    private userRepository = AppDataSource.getRepository(User);
 
-    constructor() {
-        this.userRepository = appDataSource.getRepository(User);
-    }
+    async execute(createUserDto: CreateUserDto) {
+        try {
+            // Check if user already exists
+            const existingUser = await this.userRepository.findOne({
+                where: { email: createUserDto.email }
+            });
 
-    async execute(createUserDto: CreateUserDto): Promise<User> {
+            if (existingUser) {
+                throw new Error('User already exists with this email');
+            }
 
-        const userExists = await this.userRepository.findOne({
-            where: { email: createUserDto.email },
-        });
+            // Hash password
+            const hashedPassword = await AuthService.hashPassword(createUserDto.password);
 
-        if (userExists) {
-            throw new Error(`User with email ${createUserDto.email} already exists`);
+            // Create new user
+            const newUser = this.userRepository.create({
+                ...createUserDto,
+                password: hashedPassword,
+                role: createUserDto.role as any
+            });
+
+            const savedUser = await this.userRepository.save(newUser);
+
+            // Generate token
+            const token = AuthService.generateToken(savedUser);
+
+            // Return user without password and token
+            return {
+                user: AuthService.sanitizeUser(savedUser),
+                token
+            };
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Error registering user');
         }
-
-        // Convertir el role a UserRole, o usar el valor por defecto
-        const userData = {
-            ...createUserDto,
-            role: createUserDto.role && Object.values(UserRole).includes(createUserDto.role as UserRole)
-                ? createUserDto.role as UserRole
-                : UserRole.USER,
-        };
-
-        const newUser = this.userRepository.create(userData);
-
-        return await this.userRepository.save(newUser);
     }
 }

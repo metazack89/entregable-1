@@ -1,26 +1,56 @@
-import { Repository } from 'typeorm';
+import { AppDataSource } from '../../../data/postgres/postgres-database';
 import { User } from '../../../data/postgres/models/user.model';
-import { appDataSource } from '../../../data/postgres/postgres-database';
 
 export class EliminatorUserService {
-    private readonly userRepository: Repository<User>;
+    private userRepository = AppDataSource.getRepository(User);
 
-    constructor() {
-        this.userRepository = appDataSource.getRepository(User);
+    async execute(id: number) {
+        try {
+            const user = await this.userRepository.findOne({
+                where: { id, is_active: true }
+            });
+
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Soft delete - set is_active to false
+            await this.userRepository.update(id, { is_active: false });
+
+            return {
+                message: 'User deleted successfully',
+                deletedUserId: id
+            };
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Error deleting user');
+        }
     }
 
-    async execute(id: string): Promise<boolean> {
+    async hardDelete(id: number) {
+        try {
+            const user = await this.userRepository.findOne({
+                where: { id }
+            });
 
-        const user = await this.userRepository.findOne({
-            where: { id }
-        });
+            if (!user) {
+                throw new Error('User not found');
+            }
 
-        if (!user) {
-            return false;
+            // Hard delete - permanently remove from database
+            await this.userRepository.remove(user);
+
+            return {
+                message: 'User permanently deleted',
+                deletedUserId: id
+            };
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Error permanently deleting user');
         }
-
-        const result = await this.userRepository.delete(id);
-
-        return result.affected !== undefined && result.affected !== null && result.affected > 0;
     }
 }
