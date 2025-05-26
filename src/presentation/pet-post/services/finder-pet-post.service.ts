@@ -41,7 +41,7 @@ export class FinderPetPostService {
             const isAdmin = userRole === UserRole.ADMIN;
             const isOwner = Number(post.user_id) === Number(userId);
 
-            if (!isAdmin && post.status !== PostStatus.APPROVED && !isOwner) {
+            if (!isAdmin && post.status !== UserRole.APPROVED && !isOwner) {
                 throw new Error('Access denied to this post');
             }
 
@@ -81,8 +81,9 @@ export class FinderPetPostService {
         try {
             const posts = await this.petPostRepository.find({
                 where: {
-                    status: PostStatus.PENDING,
-                    is_active: true
+                    status: UserRole.PENDING,
+                    is_active: true,
+                    user: { is_active: true }
                 },
                 relations: ['user'],
                 order: { created_at: 'ASC' }

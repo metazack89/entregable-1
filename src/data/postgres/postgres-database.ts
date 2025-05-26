@@ -5,11 +5,11 @@ import { PetPost } from './models/pet-post.model';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
-    host: envs.PG_DATABASE,
-    port: envs.PG_PORT,
-    username: envs.PG_USERNAME,
-    password: envs.PG_PASSWORD,
-    database: envs.PG_DATABASE,
+    host: envs.DATABASE_HOST,
+    port: envs.DATABASE_PORT,
+    username: envs.DATABASE_USERNAME,
+    password: envs.DATABASE_PASSWORD,
+    database: envs.DATABASE_NAME,
     synchronize: true,
     logging: envs.NODE_ENV === 'development',
     entities: [User, PetPost],

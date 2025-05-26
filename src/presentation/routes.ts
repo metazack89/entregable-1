@@ -11,7 +11,7 @@ export class AppRoutes {
         router.use('/api/pet-posts', PetPostRoutes.routes);
 
         // Health check
-        router.get('/health', (req, res) => {
+        router.get('/health', (_req, res) => {
             res.status(200).json({
                 message: 'API is running',
                 timestamp: new Date().toISOString()

@@ -3,7 +3,9 @@ import { PetPost } from './pet-post.model';
 
 export enum UserRole {
     ADMIN = 'admin',
-    USER = 'user'
+    USER = 'user',
+    PENDING = "PENDING",
+    APPROVED = "APPROVED"
 }
 
 @Entity('users')

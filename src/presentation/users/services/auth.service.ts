@@ -39,7 +39,7 @@ export class AuthService {
                 expiresIn: envs.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']
             };
 
-            return jwt.sign(payload, envs.JWT_SECRET as jwt.Secret, options);
+            return jwt.sign(payload, envs.JWT_KEY as jwt.Secret, options);
         } catch (error) {
             throw new Error('Error generating token');
         }
@@ -47,7 +47,7 @@ export class AuthService {
 
     static verifyToken(token: string): TokenPayload {
         try {
-            return jwt.verify(token, envs.JWT_SECRET as jwt.Secret) as TokenPayload;
+            return jwt.verify(token, envs.JWT_KEY as jwt.Secret) as TokenPayload;
         } catch (error) {
             throw new Error('Invalid token');
         }

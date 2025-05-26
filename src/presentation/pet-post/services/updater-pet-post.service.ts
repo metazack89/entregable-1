@@ -10,8 +10,8 @@ export class UpdaterPetPostService {
     async execute(
         id: number,
         dto: UpdatePetPostDto,
-        role: UserRole,
-        data: { status?: "pending" | "approved" | "rejected" | undefined; is_active?: boolean | undefined; contact_email?: string | undefined; contact_phone?: string | undefined; title?: string | undefined; description?: string | undefined; pet_type?: string | undefined; pet_name?: string | undefined; location?: string | undefined; image_url?: string | undefined; }
+        _role: UserRole,
+        _data: { status?: "pending" | "approved" | "rejected" | undefined; is_active?: boolean | undefined; contact_email?: string | undefined; contact_phone?: string | undefined; title?: string | undefined; description?: string | undefined; pet_type?: string | undefined; pet_name?: string | undefined; location?: string | undefined; image_url?: string | undefined; }
     ): Promise<PetPost> {
         const postRepository = AppDataSource.getRepository(PetPost);
 

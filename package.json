@@ -4,11 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && tsc",
-    "start": "npm run build && node dist/app.js",
-    "dev": "nodemon --exec ts-node src/app.ts",
-    "start:dev": "ts-node-dev src/app.ts"
+    "start:dev": "tsnd --respawn src/app.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -90,6 +87,7 @@
     "path-scurry": "^2.0.0",
     "pg": "^8.16.0",
     "picomatch": "^2.3.1",
+    "postgresql": "^0.0.1",
     "readdirp": "^3.6.0",
     "resolve": "^1.22.10",
     "shebang-command": "^2.0.0",

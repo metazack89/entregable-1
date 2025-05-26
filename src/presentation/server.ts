@@ -55,10 +55,6 @@ export class Server {
         }
     }
 
-    // Sincronizar modelos con la base de datos
-    // En producción, deberías usar migraciones en lugar de sync
-
-
 
     public start() {
         this.app.listen(this.port, () => {
